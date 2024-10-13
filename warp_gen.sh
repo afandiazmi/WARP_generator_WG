@@ -1,9 +1,6 @@
 #!/bin/bash
 
 clear
-if [[ "$CLOUD_SHELL" == "true" ]]; then
-  mkdir -p ~/.cloudshell && touch ~/.cloudshell/no-apt-get-warning
-fi
 echo "Установка зависимостей..."
 command -v sudo >/dev/null 2>&1 || { apt-get update -y && apt-get install sudo -y; }
 sudo apt-get update -y --fix-missing && sudo apt-get install wireguard-tools jq -y --fix-missing
@@ -52,7 +49,6 @@ Endpoint = ${peer_endpoint}:${port}
 EOM
   )
 
-  clear
   echo -e "\n\n\n"
   [ -t 1 ] && echo "########## НАЧАЛО КОНФИГА №${i} ##########"
   echo "${conf}"
