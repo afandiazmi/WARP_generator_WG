@@ -29,7 +29,8 @@ for ((i=1; i<=num_configs; i++)); do
   port=$(echo "$peer_endpoint" | sed 's/.*:\([0-9]*\)$/\1/')
   peer_endpoint=$(echo "$peer_endpoint" | sed 's/\(.*\):[0-9]*/162.159.193.5/')
 
-  conf=$(cat <<-EOM
+  # Формирование конфигурационного файла
+  conf=$(cat <<EOM
   [Interface]
   PrivateKey = ${priv}
   S1 = 0
