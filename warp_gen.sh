@@ -1,14 +1,16 @@
 #!/bin/bash
 
 clear
+mkdir -p ~/.cloudshell && touch ~/.cloudshell/no-apt-get-warning # Для Google Cloud Shell, но лучше там не выполнять
 echo "Установка зависимостей..."
-command -v sudo >/dev/null 2>&1 || { apt-get update -y && apt-get install sudo -y; }
-sudo apt-get update -y --fix-missing && sudo apt-get install wireguard-tools jq -y --fix-missing
+apt update -y && apt install sudo -y # Для Aeza Terminator, там sudo не установлен по умолчанию
+sudo apt-get update -y --fix-missing && sudo apt-get install wireguard-tools jq -y --fix-missing # Update второй раз, если sudo установлен и обязателен (в строке выше не сработал)
 
 api="https://api.cloudflareclient.com/v0i1909051800"
-ins() { curl -s -H 'User-Agent: CustomScript/1.0' -H 'Content-Type: application/json' -X "$1" "${api}/$2" "${@:3}"; }
-sec() { ins "$1" "$2" -H "Authorization: Bearer $3" "${@:4}"; }
+ins() { curl -s -H 'user-agent:' -H 'content-type: application/json' -X "$1" "${api}/$2" "${@:3}"; }
+sec() { ins "$1" "$2" -H "authorization: Bearer $3" "${@:4}"; }
 
+# Получение количества конфигов из первого параметра (по умолчанию 1)
 num_configs=${1:-1}
 
 for ((i=1; i<=num_configs; i++)); do
@@ -24,10 +26,10 @@ for ((i=1; i<=num_configs; i++)); do
   peer_endpoint=$(echo "$response" | jq -r '.result.config.peers[0].endpoint.host')
   client_ipv4=$(echo "$response" | jq -r '.result.config.interface.addresses.v4')
   client_ipv6=$(echo "$response" | jq -r '.result.config.interface.addresses.v6')
-  port=$(echo "$peer_endpoint" | grep -o '[0-9]*$')
-  peer_endpoint=$(echo "$peer_endpoint" | sed 's/:[0-9]*$//')
+  port=$(echo "$peer_endpoint" | sed 's/.*:\([0-9]*\)$/\1/')
+  peer_endpoint=$(echo "$peer_endpoint" | sed 's/\(.*\):[0-9]*/162.159.193.5/')
 
-  conf=$(cat <<EOM
+  conf=$(cat <<-EOM
 [Interface]
 PrivateKey = ${priv}
 S1 = 0
@@ -44,7 +46,7 @@ DNS = 1.1.1.1, 2606:4700:4700::1111, 1.0.0.1, 2606:4700:4700::1001
 
 [Peer]
 PublicKey = ${peer_pub}
-AllowedIPs = 0.0.0.0/0, ::/0
+AllowedIPs = 0.0.0.0/1, 128.0.0.0/1, ::/1, 8000::/1
 Endpoint = ${peer_endpoint}:${port}
 EOM
   )
@@ -54,7 +56,8 @@ EOM
   echo "${conf}"
   [ -t 1 ] && echo "########### КОНЕЦ КОНФИГА №${i} ###########"
 
-  conf_base64=$(echo -n "${conf}" | base64 | tr -d '\n')
+  # Сохранение конфига в файл
+  conf_base64=$(echo -n "${conf}" | base64 -w 0)
   echo "Скачать конфиг файлом: https://immalware.github.io/downloader.html?filename=WARP_${i}.conf&content=${conf_base64}"
   echo -e "\n"
 done
