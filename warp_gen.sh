@@ -48,9 +48,9 @@ EOM
   [ -t 1 ] && echo "########### CONFIG №${i} ###########"
 
   # Сохранение конфига в файл
-  conf_base64=$(echo -n "${conf}" | base64 -w 0)
+  # conf_base64=$(echo -n "${conf}" | base64 -w 0)
   # echo "Скачать конфиг файлом: https://immalware.github.io/downloader.html?filename=WARP_${i}.conf&content=${conf_base64}"
-  echo -e "\n"
+  # echo -e "\n"
 done
 
 echo "Что-то не получилось? Есть вопросы? Пишите в чат: https://t.me/immalware_chat"
