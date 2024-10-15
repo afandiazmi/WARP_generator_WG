@@ -43,13 +43,13 @@ EOM
   )
 
   echo -e "\n\n\n"
-  [ -t 1 ] && echo "########## НАЧАЛО КОНФИГА №${i} ##########"
+  [ -t 1 ] && echo "########## CONFIG №${i} ##########"
   echo "${conf}"
-  [ -t 1 ] && echo "########### КОНЕЦ КОНФИГА №${i} ###########"
+  [ -t 1 ] && echo "########### CONFIG №${i} ###########"
 
   # Сохранение конфига в файл
   conf_base64=$(echo -n "${conf}" | base64 -w 0)
-  echo "Скачать конфиг файлом: https://immalware.github.io/downloader.html?filename=WARP_${i}.conf&content=${conf_base64}"
+  # echo "Скачать конфиг файлом: https://immalware.github.io/downloader.html?filename=WARP_${i}.conf&content=${conf_base64}"
   echo -e "\n"
 done
 
