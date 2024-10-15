@@ -32,15 +32,6 @@ for ((i=1; i<=num_configs; i++)); do
   conf=$(cat <<-EOM
 [Interface]
 PrivateKey = ${priv}
-S1 = 0
-S2 = 0
-Jc = 4
-Jmin = 40
-Jmax = 70
-H1 = 1
-H2 = 2
-H3 = 3
-H4 = 4
 Address = ${client_ipv4}, ${client_ipv6}
 DNS = 1.1.1.1, 2606:4700:4700::1111, 1.0.0.1, 2606:4700:4700::1001
 
